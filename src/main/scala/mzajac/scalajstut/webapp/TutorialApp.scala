@@ -9,15 +9,16 @@ import dom.document
 
 object TutorialApp extends JSApp {
   def main(): Unit = {
-    appendPar(document.body, "Hello World!")
+    jQuery(setupUI _)
   }
 
-  def appendPar(targetNode: dom.Node, text: String): Unit = {
-    jQuery("body").append(s"<p>$text</p>")
-  }
-
-  @JSExport
+  // @JSExport
   def addClickMessage(): Unit = {
-    appendPar(document.body, "Button clicked!")
+    jQuery("body").append("<p>Button Clicked!</p>")
+  }
+
+  def setupUI(): Unit = {
+    jQuery("body").append(s"<p>Hello World!</p>")
+    jQuery("#click-me-button").click(addClickMessage _)
   }
 }
