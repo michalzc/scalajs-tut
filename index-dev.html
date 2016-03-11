@@ -7,10 +7,13 @@
   <body>
     <!-- Include Scala.js compiled code -->
     <script type="text/javascript" src="./target/scala-2.11/scala-js-tutorial-fastopt.js"></script>
+    <script type="text/javascript" src="./target/scala-2.11/scala-js-tutorial-jsdeps.js"></script>
 
     <!-- Run the mzajac.scalajstut.webapp.TutorialApp -->
     <script type="text/javascript">
       mzajac.scalajstut.webapp.TutorialApp().main();
     </script>
+
+    <button id="click-me-button" type="button" onclick="mzajac.scalajstut.webapp.TutorialApp().addClickMessage()">Click me</button>
   </body>
 </html>
