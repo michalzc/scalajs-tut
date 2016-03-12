@@ -19,6 +19,11 @@ object TutorialApp extends JSApp {
 
   def setupUI(): Unit = {
     jQuery("body").append(s"<p>Hello World!</p>")
-    jQuery("#click-me-button").click(addClickMessage _)
+    jQuery("""
+      |<button type="button">Click me!</button>
+      """.stripMargin)
+      .click(addClickMessage _)
+      .appendTo(jQuery("body"))
+    // jQuery("#click-me-button").click(addClickMessage _)
   }
 }
