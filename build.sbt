@@ -21,14 +21,22 @@ lazy val `lgt-client` = project.in(file("lgt-client"))
   .settings(
     libraryDependencies ++= Seq(
       "org.scala-js" %%% "scalajs-dom" % "0.9.0",
-      "be.doeraene" %%% "scalajs-jquery" % "0.9.0",
+      "com.github.japgolly.scalajs-react" %%% "core" % "0.11.0",
 
       //test deps
       "com.lihaoyi" %%% "utest" % "0.3.0" % "test"
     ),
     jsDependencies ++= Seq(
-      "org.webjars" % "jquery" % "2.1.4" / "2.1.4/jquery.js",
-      RuntimeDOM
+      "org.webjars.bower" % "react" % "15.0.1"
+        /             "react-with-addons.js"
+        minified      "react-with-addons.min.js"
+        commonJSName  "React",
+      "org.webjars.bower" % "react" % "15.0.1"
+        /             "react-dom.js"
+        minified      "react-dom.min.js"
+        dependsOn     "react-with-addons.js"
+        commonJSName  "ReactDOM",
+        RuntimeDOM
     ),
     skip in packageJSDependencies := false,
     testFrameworks += new TestFramework("utest.runner.Framework"),
