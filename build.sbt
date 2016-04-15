@@ -22,6 +22,7 @@ lazy val `lgt-client` = project.in(file("lgt-client"))
     libraryDependencies ++= Seq(
       "org.scala-js" %%% "scalajs-dom" % "0.9.0",
       "com.github.japgolly.scalajs-react" %%% "core" % "0.11.0",
+      "org.scalaz" %%% "scalaz-core" % "7.2.2",
 
       //test deps
       "com.lihaoyi" %%% "utest" % "0.3.0" % "test"
