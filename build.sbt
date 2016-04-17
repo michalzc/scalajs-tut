@@ -1,7 +1,7 @@
 import sbt._
 import sbt.Keys._
 
-name := "Let's go there"
+name := "Contact List Example"
 
 lazy val commonSettings = Seq(
   version := "0.0.1-SNAPSHOT",
@@ -9,12 +9,12 @@ lazy val commonSettings = Seq(
 )
 
 lazy val root = project.in(file("."))
-  .aggregate(`lgt-client`, `lgt-server`, `lgt-domain`)
+  .aggregate(`clist-client`, `clist-server`, `clist-domain`)
   .disablePlugins(sbtassembly.AssemblyPlugin)
 
 
-lazy val `lgt-client` = project.in(file("lgt-client"))
-  .dependsOn(`lgt-domain` % ("test->test;compile->compile"))
+lazy val `clist-client` = project.in(file("clist-client"))
+  .dependsOn(`clist-domain` % ("test->test;compile->compile"))
   .enablePlugins(ScalaJSPlugin)
   .disablePlugins(sbtassembly.AssemblyPlugin)
   .settings(commonSettings: _*)
@@ -23,6 +23,7 @@ lazy val `lgt-client` = project.in(file("lgt-client"))
       "org.scala-js" %%% "scalajs-dom" % "0.9.0",
       "com.github.japgolly.scalajs-react" %%% "core" % "0.11.0",
       "org.scalaz" %%% "scalaz-core" % "7.2.2",
+      "biz.enef" %%% "slogging" % "0.4.0",
 
       //test deps
       "com.lihaoyi" %%% "utest" % "0.3.0" % "test"
@@ -44,8 +45,8 @@ lazy val `lgt-client` = project.in(file("lgt-client"))
     scalaJSStage in Global := FastOptStage
   )
 
-lazy val `lgt-server` = project.in(file("lgt-server"))
-  .dependsOn(`lgt-domain` % "test->test;compile->compile")
+lazy val `clist-server` = project.in(file("clist-server"))
+  .dependsOn(`clist-domain` % "test->test;compile->compile")
   .settings(commonSettings: _*)
   .settings(
     libraryDependencies ++= Seq(
@@ -55,11 +56,11 @@ lazy val `lgt-server` = project.in(file("lgt-server"))
       "com.typesafe.akka" %% "akka-http-testkit" % "2.4.2" % "test",
       "org.specs2" %% "specs2-core" % "3.7.2" % "test"
     ),
-    (resources in Compile) += (fastOptJS in (`lgt-client`, Compile)).value.data,
-    (resources in Compile) += (packageJSDependencies in (`lgt-client`, Compile)).value,
-    (resources in Compile) <++= (resources in (`lgt-client`, Compile))
+    (resources in Compile) += (fastOptJS in (`clist-client`, Compile)).value.data,
+    (resources in Compile) += (packageJSDependencies in (`clist-client`, Compile)).value,
+    (resources in Compile) <++= (resources in (`clist-client`, Compile))
   )
 
-lazy val `lgt-domain` = project.in(file("lgt-domain"))
+lazy val `clist-domain` = project.in(file("clist-domain"))
   .disablePlugins(sbtassembly.AssemblyPlugin)
   .settings(commonSettings: _*)
