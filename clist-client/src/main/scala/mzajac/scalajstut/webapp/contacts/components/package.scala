@@ -18,7 +18,7 @@ package object components {
     .componentDidMount(_.backend.loadContactList)
     .build
 
-  val ContactForm = ReactComponentB[Unit]("ContactForm")
+  val ContactForm = ReactComponentB[ContactEntry]("ContactForm")
     .initialState(ContactEntry())
     .renderBackend[ContactFormBackend]
     .build

@@ -4,26 +4,52 @@ import japgolly.scalajs.react.{BackendScope, Callback, ReactElement}
 import mzajac.scalajstut.webapp.contacts.model.ContactEntry
 import japgolly.scalajs.react.vdom.prefix_<^._
 import slogging.LazyLogging
+import japgolly.scalajs.react.{ReactEventI, ReactEventTA}
+import scalaz.syntax.std.option._
 
 
 /**
   * Created by michal on 17.04.16.
   */
-class ContactFormBackend($: BackendScope[Unit, ContactEntry]) extends LazyLogging {
+class ContactFormBackend($: BackendScope[ContactEntry, ContactEntry]) extends LazyLogging {
 
-  def addContact = $.state.tap { contact =>
-    logger.info(s"Contact: $contact")
+  def updateContact(ev: ReactEventI) = {
+
+    ev.preventDefaultCB >>
+    $.state.flatMap { contactEntry =>
+      $.props.map { initialEntry =>
+        contactEntry.copy(id = initialEntry.id)
+      }
+    }.tap{ contact =>
+      logger.info(s"Contact to send: $contact")
+
+    }
+  }
+
+  def updateName(ev: ReactEventI) = {
+    val newName = ev.target.value
+    $.modState(_.copy(name = newName.some))
+  }
+
+  def updateEmail(ev: ReactEventI) = {
+    val newEmail = ev.target.value
+    $.modState(_.copy(email = newEmail.some))
+  }
+
+  def updateDescription(ev: ReactEventTA) = {
+    val newDescription = ev.target.value
+    $.modState(_.copy(description = newDescription.some))
   }
 
 
-  def render(state: ContactEntry): ReactElement =
-    <.form(^.className := "Contact-form",
+  def render(props: ContactEntry): ReactElement =
+    <.form(^.className := "Contact-form", ^.onSubmit ==> updateContact,
       <.fieldset(
         <.legend("New contact"),
-        <.input(^.`type` := "text", ^.placeholder := "name", ^.value := state.name), <.br,
-        <.input(^.`type` := "email", ^.placeholder := "email", ^.value := state.email), <.br,
-        <.textarea(^.placeholder := "description", ^.value := state.description), <.br,
-        <.input(^.`type` := "button", ^.value := "Add contact", ^.onClick --> addContact.void)
+        <.input(^.`type` := "text", ^.placeholder := "name", ^.value := props.name, ^.onChange ==> updateName), <.br,
+        <.input(^.`type` := "email", ^.placeholder := "email", ^.value := props.email, ^.onChange ==> updateEmail), <.br,
+        <.textarea(^.placeholder := "description", ^.value := props.description, ^.onChange ==> updateDescription), <.br,
+        <.input(^.`type` := "submit", ^.value := "Add contact")
       )
     )
 }
