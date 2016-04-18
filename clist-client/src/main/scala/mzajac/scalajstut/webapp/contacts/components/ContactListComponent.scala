@@ -38,17 +38,21 @@ object ContactListComponent {
       }
     }
 
-    def render(state: ContactListState): ReactElement = <.div(
-      <.h1("Contacts"),
-      <.ul(
-        state
-          .contacts
-          .values
-          .filter(c => c.email.isDefined)
-          .map { contact => ContactView.withKey(contact.id)(contact) }
-      ),
-      ContactForm(ContactFormProps(state.formContact, updateContact))
-    )
+    def render(state: ContactListState): ReactElement = {
+      logger.info("Rendering contact list")
+      <.div(
+        <.h1("Contacts"),
+        <.ul(
+          state
+            .contacts
+            .values
+            .filter(c => c.email.isDefined)
+            .map { contact => ContactView.withKey(contact.id)(contact) }
+        ),
+        ContactForm(ContactFormProps(state.formContact, updateContact))
+      )
+    }
+
   }
 
 

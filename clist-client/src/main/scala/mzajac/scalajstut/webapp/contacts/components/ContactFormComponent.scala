@@ -58,7 +58,8 @@ object ContactFormComponent {
       scope.modState(_.copy(description = newDescription.some))
     }
 
-    def render(props: ContactFormProps): ReactElement =
+    def render(props: ContactFormProps): ReactElement = {
+      logger.info(s"Rendering contact form with contact: ${props.contact}")
       <.form(^.className := "Contact-form", ^.onSubmit ==> updateContact,
         <.fieldset(
           <.legend("New contact"),
@@ -68,6 +69,7 @@ object ContactFormComponent {
           <.input(^.`type` := "submit", ^.value := "Add contact")
         )
       )
+    }
   }
 
   val ContactForm = ReactComponentB[ContactFormProps]("ContactForm")
