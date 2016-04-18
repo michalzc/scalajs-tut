@@ -1,7 +1,7 @@
 package mzajac.scalajstut.webapp.contacts
 
 import japgolly.scalajs.react.ReactDOM
-import mzajac.scalajstut.webapp.contacts.components.ContactListProps
+import mzajac.scalajstut.webapp.contacts.components.ContactListComponent.{ContactList, ContactListProps}
 import mzajac.scalajstut.webapp.contacts.model.Contact
 import org.scalajs.dom.document
 import slogging._
@@ -24,12 +24,12 @@ object ContactsApp extends JSApp with LazyLogging {
     )
 
     val target = document.getElementById("main-content")
-    val contactList = components.ContactListComponent(new ContactListProps {
-      override def loadContacts: Seq[Contact] = {
+    val contactList = ContactList(new ContactListProps {
+      override def loadContacts = {
         logger.info("Getting initial state from props")
         contacts
       }
     })
-    ReactDOM.render( contactList, target)
+    ReactDOM.render(contactList, target)
   }
 }
