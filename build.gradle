@@ -1,0 +1,28 @@
+ext.scalaVersion = '2.11'
+ext.scalaReleaseVersion = scalaVersion + '.8'
+ext.scalaJsVersion = '0.6'
+ext.scalaJsReleaseVersion = scalaJsVersion + '.8'
+
+subprojects {
+  apply plugin: 'scala'
+
+  repositories {
+    mavenCentral()
+  }
+
+  dependencies {
+    compile "org.scala-lang:scala-library:$scalaReleaseVersion"
+  }
+
+  sourceSets {
+    shared {
+      scala {
+        srcDirs = ["$rootDir/clist-domain/src/main/scala"]
+      }
+    }
+  }
+
+  compileScala {
+    source sourceSets.shared.scala
+  }
+}

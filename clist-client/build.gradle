@@ -1,0 +1,42 @@
+configurations {
+  provided
+}
+
+dependencies {
+  compile "org.scala-js:scalajs-library_$scalaVersion:$scalaJsReleaseVersion"
+  compile "org.scala-js:scalajs-dom_sjs${scalaJsVersion}_$scalaVersion:0.9.0"
+  compile "com.github.japgolly.scalajs-react:core_sjs${scalaJsVersion}_$scalaVersion:0.11.0"
+  compile "org.scalaz:scalaz-core_sjs${scalaJsVersion}_$scalaVersion:7.2.2"
+  compile "biz.enef:slogging_sjs${scalaJsVersion}_$scalaVersion:0.4.0"
+
+  // "biz.enef" %%% "slogging" % "0.4.0",
+
+  provided "org.scala-js:scalajs-compiler_$scalaReleaseVersion:$scalaJsReleaseVersion"
+  provided "org.scala-js:scalajs-cli_$scalaVersion:$scalaJsReleaseVersion"
+}
+
+compileScala {
+  scalaCompileOptions.additionalParameters = [
+    '-feature',
+    '-deprecation',
+    '-encoding', 'utf-8',
+    '-Xplugin:' + configurations.provided.find { it.name.startsWith('scalajs-compiler_') }
+  ]
+}
+
+task createBuildDir() << {
+  mkdir(project.buildDir.absolutePath + '/js')
+}
+
+task compileScalaJs(type: JavaExec, dependsOn: [compileScala, createBuildDir]) {
+  main = 'org.scalajs.cli.Scalajsld'
+  args = [
+    '-n',
+    '--stdlib',
+    configurations.runtime.find { it.name.startsWith('scalajs-library_') },
+    '-o',
+    project.buildDir.absolutePath + '/js/clist-client.js'
+  ] + (configurations.runtime + files(compileScala.destinationDir))
+  classpath configurations.runtime
+  classpath configurations.provided
+}

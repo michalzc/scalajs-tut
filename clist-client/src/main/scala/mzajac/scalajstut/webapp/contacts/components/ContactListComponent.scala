@@ -32,7 +32,6 @@ object ContactListComponent {
 
     def setContactToForm(contact: Contact): Callback = {
       logger.debug(s"Contact to update form: $contact")
-      scope.propsChildren.map(pc => pc.)
       scope.modState(_.copy(formContact = ContactEntry(contact.id.some, contact.name.some, contact.email, contact.description)))
     }
 

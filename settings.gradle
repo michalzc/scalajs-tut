@@ -1,0 +1,6 @@
+include 'clist-server'
+include 'clist-client'
+
+rootProject.name = 'clist-app'
+project(":clist-server").name = 'clist-server'
+project(":clist-client").name = 'clist-client'
