@@ -27,7 +27,7 @@ object ContactFormComponent {
       } yield (updateFun, newContact)
 
       val updateCb: Callback = newContactCb.flatMap { case (updateFun, newContact) =>
-        if(newContact.name.isDefined && newContact.email.isDefined) {
+        if (newContact.name.isDefined && newContact.email.isDefined) {
           logger.debug(s"Updating contact: $newContact")
           updateFun(newContact)
         }
@@ -58,14 +58,13 @@ object ContactFormComponent {
       scope.modState(_.copy(description = newDescription.some))
     }
 
-    def render(props: ContactFormProps): ReactElement = {
-      logger.info(s"Rendering contact form with contact: ${props.contact}")
+    def render(state: ContactEntry): ReactElement = {
       <.form(^.className := "Contact-form", ^.onSubmit ==> updateContact,
         <.fieldset(
           <.legend("New contact"),
-          <.input(^.`type` := "text", ^.placeholder := "name", ^.value := props.contact.name, ^.onChange ==> updateName), <.br,
-          <.input(^.`type` := "email", ^.placeholder := "email", ^.value := props.contact.email, ^.onChange ==> updateEmail), <.br,
-          <.textarea(^.placeholder := "description", ^.value := props.contact.description, ^.onChange ==> updateDescription), <.br,
+          <.input(^.`type` := "text", ^.placeholder := "name", ^.value := state.name, ^.onChange ==> updateName), <.br,
+          <.input(^.`type` := "email", ^.placeholder := "email", ^.value := state.email, ^.onChange ==> updateEmail), <.br,
+          <.textarea(^.placeholder := "description", ^.value := state.description, ^.onChange ==> updateDescription), <.br,
           <.input(^.`type` := "submit", ^.value := "Add contact")
         )
       )
@@ -75,5 +74,6 @@ object ContactFormComponent {
   val ContactForm = ReactComponentB[ContactFormProps]("ContactForm")
     .initialState(ContactEntry())
     .renderBackend[ContactFormBackend]
+    .componentDidMount(cb => cb.modState(_ => cb.props.contact))
     .build
 }

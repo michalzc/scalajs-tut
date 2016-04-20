@@ -1,11 +1,13 @@
 package mzajac.scalajstut.webapp.contacts.components
 
-import japgolly.scalajs.react.{BackendScope, Callback, ReactComponentB, ReactElement}
+import japgolly.scalajs.react.{BackendScope, Callback, ReactComponentB, ReactElement, Ref}
 import mzajac.scalajstut.webapp.contacts.model.{Contact, ContactEntry}
 import japgolly.scalajs.react.vdom.prefix_<^._
 import mzajac.scalajstut.webapp.contacts.components.ContactFormComponent.{ContactForm, ContactFormProps}
-import mzajac.scalajstut.webapp.contacts.components.ContactViewComponent.ContactView
+import mzajac.scalajstut.webapp.contacts.components.ContactViewComponent.{ContactView, ContactViewProps}
 import slogging.LazyLogging
+
+import scalaz.syntax.std.option._
 
 /**
   * Created by michal on 15.04.16.
@@ -28,6 +30,12 @@ object ContactListComponent {
       }
     }
 
+    def setContactToForm(contact: Contact): Callback = {
+      logger.debug(s"Contact to update form: $contact")
+      scope.propsChildren.map(pc => pc.)
+      scope.modState(_.copy(formContact = ContactEntry(contact.id.some, contact.name.some, contact.email, contact.description)))
+    }
+
     def updateContact(contact: ContactEntry): Callback = {
       logger.info(s"Received contact: $contact")
       scope.modState { state =>
@@ -47,7 +55,7 @@ object ContactListComponent {
             .contacts
             .values
             .filter(c => c.email.isDefined)
-            .map { contact => ContactView.withKey(contact.id)(contact) }
+            .map { contact => ContactView.withKey(contact.id)(ContactViewProps(contact, setContactToForm)) }
         ),
         ContactForm(ContactFormProps(state.formContact, updateContact))
       )
