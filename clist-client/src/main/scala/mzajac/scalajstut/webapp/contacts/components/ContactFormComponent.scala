@@ -38,9 +38,10 @@ object ContactFormComponent {
       }
 
 
-      ev.preventDefaultCB >> updateCb
-
-
+      ev.preventDefaultCB >> updateCb >> scope.modState{ state =>
+        logger.info(s"Update current state: $state")
+        ContactEntry()
+      }
     }
 
     def updateName(ev: ReactEventI) = {
@@ -58,13 +59,14 @@ object ContactFormComponent {
       scope.modState(_.copy(description = newDescription.some))
     }
 
-    def render(state: ContactEntry): ReactElement = {
-      <.form(^.className := "Contact-form", ^.onSubmit ==> updateContact,
+    def render(props: ContactFormProps): ReactElement = {
+      logger.debug(s"Rendering contact form with: ${props.contact}")
+      <.form(^.className := "Contact-form", ^.onSubmit ==> updateContact, ^.autoComplete := "off",
         <.fieldset(
-          <.legend("New contact"),
-          <.input(^.`type` := "text", ^.placeholder := "name", ^.value := state.name, ^.onChange ==> updateName), <.br,
-          <.input(^.`type` := "email", ^.placeholder := "email", ^.value := state.email, ^.onChange ==> updateEmail), <.br,
-          <.textarea(^.placeholder := "description", ^.value := state.description, ^.onChange ==> updateDescription), <.br,
+          <.legend("New contact!"),
+          <.input(^.`type` := "text", ^.placeholder := "name", ^.defaultValue := props.contact.name, ^.onChange ==> updateName), <.br,
+          <.input(^.`type` := "email", ^.placeholder := "email", ^.defaultValue := props.contact.email, ^.onChange ==> updateEmail), <.br,
+          <.textarea(^.placeholder := "description", ^.defaultValue := props.contact.description, ^.onChange ==> updateDescription), <.br,
           <.input(^.`type` := "submit", ^.value := "Add contact")
         )
       )
@@ -74,6 +76,6 @@ object ContactFormComponent {
   val ContactForm = ReactComponentB[ContactFormProps]("ContactForm")
     .initialState(ContactEntry())
     .renderBackend[ContactFormBackend]
-    .componentDidMount(cb => cb.modState(_ => cb.props.contact))
+//    .componentDidMount(cb => cb.modState(_ => cb.props.contact))
     .build
 }

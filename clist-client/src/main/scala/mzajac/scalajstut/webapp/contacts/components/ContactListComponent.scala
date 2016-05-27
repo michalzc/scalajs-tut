@@ -32,7 +32,7 @@ object ContactListComponent {
 
     def setContactToForm(contact: Contact): Callback = {
       logger.debug(s"Contact to update form: $contact")
-      scope.propsChildren.map(pc => pc.)
+//      scope.propsChildren.map(pc => pc.)
       scope.modState(_.copy(formContact = ContactEntry(contact.id.some, contact.name.some, contact.email, contact.description)))
     }
 
@@ -48,6 +48,7 @@ object ContactListComponent {
 
     def render(state: ContactListState): ReactElement = {
       logger.info("Rendering contact list")
+      logger.info(s"Contact to fill form: ${state.formContact}")
       <.div(
         <.h1("Contacts"),
         <.ul(

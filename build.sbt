@@ -14,7 +14,7 @@ lazy val root = project.in(file("."))
 
 
 lazy val `clist-client` = project.in(file("clist-client"))
-  .dependsOn(`clist-domain` % ("test->test;compile->compile"))
+  .dependsOn(`clist-domain` % "test->test;compile->compile" )
   .enablePlugins(ScalaJSPlugin)
   .disablePlugins(sbtassembly.AssemblyPlugin)
   .settings(commonSettings: _*)
