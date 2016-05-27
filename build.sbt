@@ -3,6 +3,8 @@ import sbt.Keys._
 
 name := "Contact List Example"
 
+val akkaVersion = "2.4.6"
+
 lazy val commonSettings = Seq(
   version := "0.0.1-SNAPSHOT",
   scalaVersion := "2.11.8"
@@ -50,10 +52,13 @@ lazy val `clist-server` = project.in(file("clist-server"))
   .settings(commonSettings: _*)
   .settings(
     libraryDependencies ++= Seq(
-      "com.typesafe.akka" %% "akka-http-experimental" % "2.4.2",
+      "com.typesafe.akka" %% "akka-http-experimental" % akkaVersion,
+      "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
+      "com.typesafe.scala-logging" %% "scala-logging" % "3.4.0",
+      "ch.qos.logback" %  "logback-classic" % "1.1.7",
 
       //test
-      "com.typesafe.akka" %% "akka-http-testkit" % "2.4.2" % "test",
+      "com.typesafe.akka" %% "akka-http-testkit" % akkaVersion % "test",
       "org.specs2" %% "specs2-core" % "3.7.2" % "test"
     ),
     (resources in Compile) += (fastOptJS in (`clist-client`, Compile)).value.data,

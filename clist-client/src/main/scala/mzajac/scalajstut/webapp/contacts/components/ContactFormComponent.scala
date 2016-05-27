@@ -18,30 +18,13 @@ object ContactFormComponent {
   class ContactFormBackend(scope: BackendScope[ContactFormProps, ContactEntry]) extends LazyLogging {
 
     def updateContact(ev: ReactEventI): Callback = {
-
-      val newContactCb = for {
-        p <- scope.props
+      val updateCallback = for {
         contact <- scope.state
-        newContact = contact.copy(id = p.contact.id)
-        updateFun = p.updateContact
-      } yield (updateFun, newContact)
+        props <- scope.props
+        result <- Callback.when(contact.isUpdatable)(props.updateContact(contact))
+      } yield (result)
 
-      val updateCb: Callback = newContactCb.flatMap { case (updateFun, newContact) =>
-        if (newContact.name.isDefined && newContact.email.isDefined) {
-          logger.debug(s"Updating contact: $newContact")
-          updateFun(newContact)
-        }
-        else {
-          logger.debug("Invalid component - doing nothing")
-          Callback.empty
-        }
-      }
-
-
-      ev.preventDefaultCB >> updateCb >> scope.modState{ state =>
-        logger.info(s"Update current state: $state")
-        ContactEntry()
-      }
+      ev.preventDefaultCB >> updateCallback
     }
 
     def updateName(ev: ReactEventI) = {
@@ -63,11 +46,11 @@ object ContactFormComponent {
       logger.debug(s"Rendering contact form with: ${props.contact}")
       <.form(^.className := "Contact-form", ^.onSubmit ==> updateContact, ^.autoComplete := "off",
         <.fieldset(
-          <.legend("New contact!"),
-          <.input(^.`type` := "text", ^.placeholder := "name", ^.defaultValue := props.contact.name, ^.onChange ==> updateName), <.br,
-          <.input(^.`type` := "email", ^.placeholder := "email", ^.defaultValue := props.contact.email, ^.onChange ==> updateEmail), <.br,
-          <.textarea(^.placeholder := "description", ^.defaultValue := props.contact.description, ^.onChange ==> updateDescription), <.br,
-          <.input(^.`type` := "submit", ^.value := "Add contact")
+          <.legend("Edit"),
+          <.input(^.`type` := "text", ^.autoComplete := "off", ^.placeholder := "name", ^.defaultValue := props.contact.name, ^.onChange ==> updateName), <.br,
+          <.input(^.`type` := "email", ^.autoComplete := "off", ^.placeholder := "email", ^.defaultValue := props.contact.email, ^.onChange ==> updateEmail), <.br,
+          <.textarea(^.placeholder := "description", ^.autoComplete := "off", ^.defaultValue := props.contact.description, ^.onChange ==> updateDescription), <.br,
+          <.input(^.`type` := "submit", ^.value := "Save")
         )
       )
     }
@@ -76,6 +59,6 @@ object ContactFormComponent {
   val ContactForm = ReactComponentB[ContactFormProps]("ContactForm")
     .initialState(ContactEntry())
     .renderBackend[ContactFormBackend]
-//    .componentDidMount(cb => cb.modState(_ => cb.props.contact))
+    .componentDidMount(cb => cb.modState(_ => cb.props.contact))
     .build
 }

@@ -14,7 +14,7 @@ import scalaz.syntax.std.option._
   */
 object ContactListComponent {
 
-  case class ContactListState(formContact: ContactEntry = ContactEntry(), contacts: Map[Long, Contact] = Map.empty)
+  case class ContactListState(contacts: Map[Long, Contact] = Map.empty)
 
   trait ContactListProps {
     def loadContacts: List[Contact]
@@ -30,25 +30,22 @@ object ContactListComponent {
       }
     }
 
-    def setContactToForm(contact: Contact): Callback = {
-      logger.debug(s"Contact to update form: $contact")
-//      scope.propsChildren.map(pc => pc.)
-      scope.modState(_.copy(formContact = ContactEntry(contact.id.some, contact.name.some, contact.email, contact.description)))
-    }
-
     def updateContact(contact: ContactEntry): Callback = {
       logger.info(s"Received contact: $contact")
       scope.modState { state =>
         val newContact = Contact(contact.id.getOrElse(state.contacts.keys.max + 1), contact.name.get, contact.email, contact.description)
-        val newState = ContactListState(ContactEntry(), state.contacts + (newContact.id -> newContact))
+        val newState = ContactListState(state.contacts + (newContact.id -> newContact))
         logger.debug(s"Updating state: $newState")
         newState
       }
     }
 
+    def newContact: Callback = {
+      Callback.empty
+    }
+
     def render(state: ContactListState): ReactElement = {
       logger.info("Rendering contact list")
-      logger.info(s"Contact to fill form: ${state.formContact}")
       <.div(
         <.h1("Contacts"),
         <.ul(
@@ -56,9 +53,9 @@ object ContactListComponent {
             .contacts
             .values
             .filter(c => c.email.isDefined)
-            .map { contact => ContactView.withKey(contact.id)(ContactViewProps(contact, setContactToForm)) }
+            .map { contact => ContactView.withKey(contact.id)(ContactViewProps(contact, updateContact)) }
         ),
-        ContactForm(ContactFormProps(state.formContact, updateContact))
+        <.button(^.onClick --> newContact, "Add contact")
       )
     }
 
